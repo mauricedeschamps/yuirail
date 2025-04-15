@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yui Rail Tourist Guide</title>
+  <style>
+    :root {
+      --bg-light: #f5f5f5;
+      --text-light: blue;
+      --bg-dark: #111;
+      --text-dark: #31A9C3
+    }body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+.light {
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+header {
+  text-align: center;
+  padding: 20px 10px 5px;
+}
+
+.controls {
+  text-align: center;
+  margin: 10px 0 20px;
+}
+
+.controls button {
+  padding: 8px 14px;
+  margin: 0 6px;
+  border: none;
+  border-radius: 6px;
+  background: #444;
+  color: #fff;
+  cursor: pointer;
+}
+
+.price {
+  text-align: center;
+  font-size: 0.95em;
+  margin-bottom: 20px;
+}
+
+.rail-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px;
+  gap: 10px;
+}
+
+.station {
+  background: #2c73d2;
+  border-radius: 10px;
+  padding: 12px;
+  color: white;
+  text-align: center;
+  width: 45%;
+  max-width: 160px;
+  transition: transform 0.2s;
+}
+
+.station:hover {
+  transform: scale(1.05);
+  background: #205ea8;
+}
+
+.station a {
+  color: white;
+  text-decoration: none;
+}
+
+.spot {
+  font-size: 0.8em;
+  color: #ffd700;
+}
+
+@media (max-width: 500px) {
+  .station {
+    width: 100%;
+  }
+}
+
+.page {
+  display: none;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.page.active {
+  display: block;
+}
+
+.back-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 16px;
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.map {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.map img {
+  max-width: 90%;
+  height: auto;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+.lang-en { display: block; }
+.lang-jp { display: none; }
+.jp .lang-en { display: none; }
+.jp .lang-jp { display: block; }
+
+  </style>
+</head>
+<body class="dark">
+  <header>
+    <h1>Yui Rail Guide Naha Okinawa</h1>
+    <div class="controls">
+      <button onclick="toggleMode()">Dark / Light</button>
+      <button onclick="toggleLang()">English / 日本語</button>
+    </div>
+  </header>  <div class="price">
+  <div class="lang-en">1-Day Free Ticket:<br> <strong>¥1,000</strong> (Adult) / <strong>¥500</strong> (Child)</div>
+  <div class="lang-en">2-Day Free Ticket:<br> <strong>¥1,800</strong> (Adult) / <strong>¥900</strong> (Child)
+    </div>
+     
+   <div class="lang-jp">一日乗車券：大人<strong>¥1,000</strong> / 子供<strong>¥500</strong></div>
+   <div class="lang-jp">二日乗車券：大人<strong>¥1,800</strong> / 子供<strong>¥900</stron
+</div>
+      
+  </div>  <div class="map">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThPV6rOVwFx2V2dDc_BLu3rmY5RukO5-CPhzCuO8v3_Sg883tqXSZvobA&s=10">
+  </div>  <div class="rail-line">
+    <script>
+      const stations = [
+        { id: 'naha_airport', name: '01 Naha Airport', jp: '01 那覇空港', spot: 'Airport Terminal', spotjp: '空港ターミナル' },
+        { id: 'akamine', name: '02 Akamine', jp: '02 赤嶺', spot: 'Closest Station to Airport Hotels', spotjp: '空港周辺の<br>ホテル、サービス' },
+        { id: 'oroku', name: '03 Oroku', jp: '03 小禄', spot: 'Shopping Mall AEON Oroku', spotjp: 'イオン小禄' },
+        { id: 'onoyama', name: '04 Onoyama-kōen', jp: '04 奥武山公園', spot: 'Onoyama Park',spotjp: '奥武山公園' },
+        { id: 'tsubogawa', name: '05 Tsubogawa', jp: '05 壺川', spot: 'Riverside walk', spotjp: '川沿いの散歩道' },
+        { id: 'asahibashi', name: '06 Asahibashi', jp: '06 旭橋', spot: 'Naha Bus Terminal Naninoue Beach', spotjp:'那覇バス<br>ターミナ ル<br> 波ノ上ビーチ' },
+        { id: 'kencho', name: '07 Kenchōmae', jp: '07 県庁前', spot: 'Kokusai Street South', spotjp: '国際通り南口' },
+        { id: 'miebashi', name: '08 Miebashi', jp: '08 美栄橋', spot: 'Tomari Port<br> (10 min)<br> Kokusai Street Center', spotjp: '泊港 (10 min)<br> 国際通り中央' },
+        { id: 'makishi', name: '09 Makishi', jp: '09 牧志', spot: 'Kokusai Street North',spotjp: '国際通り北口' },
+        { id: 'asato', name: '10 Asato', jp: '10 安里', spot: 'Sakae Street Market', spotjp: '栄町市場' },
+        { id: 'omoromachi', name: '11 Omoromachi', jp: '11 おもろまち', spot: 'Shintoshin / DFS', spotjp: '新都心 / 免税店' },
+        { id: 'furujima', name: '12 Furujima', jp: '12 古島', spot: 'Residential Area', spotjp: '住宅街' },
+        { id: 'shiritsu', name: '13 Shiritsu-byōin-mae', jp: '13 市立病院前', spot: 'City Hospital', spotjp: '那覇市立病院' },
+        { id: 'gibo', name: '14 Gibo', jp: '14 儀保', spot: 'Shuri Castle West (15 min)', spotjp: '首里城西口<br> (15 min)' },
+        { id: 'shuri', name: '15 Shuri', jp: '15 首里', spot: 'Shuri Castle East (15 min)', spotjp: '首里城東口<br> (15 min)' },
+        { id: 'ishimine', name: '16 Ishimine', jp: '16 石嶺', spot: 'Residential area', spotjp:'住宅地' },
+        
+        {  id: 'kyozuka', name: '17 Kyozuka', jp: '17 経塚', spot: 'Residential Area', spotjp: '住宅地' },
+        { id: 'uehara', name: '18 Urasoe-Maeda', jp: '18 浦添前田', spot: 'Hacksaw Ridge (Urasoe Castle Ruins)', spotjp: '浦添グスク跡' },
+        { id: 'tedako', name: '19 Tedako-Uranishi', jp: '19 てだこ浦西', spot: 'Highway Bus Hub (5 min)', spotjp: '高速バスのハブ<br> (5 min)' }
+      ];stations.forEach(st => {
+    document.write(`
+      <div class="station">
+        <a href="#" onclick="showPage('${st.id}')">
+          <div class="lang-en"><strong>${st.name}</strong><br><span class="spot">${st.spot}</span></div>
+          <div class="lang-jp"><strong>${st.jp}</strong><br><span class="spot">${st.spotjp}</span></div>
+        </a>
+      </div>
+    `);
+  });
+</script>
+
+  </div>  <!-- Station Detail Pages -->  <script>
+    stations.forEach(st => {
+      document.write(`
+        <div id="${st.id}" class="page">
+          <div class="lang-en">
+            <h2>${st.name} Station</h2>
+            <p><strong>${st.spot}</strong> — This station is known for access to ${st.spot}.</p>
+          </div>
+          <div class="lang-jp">
+            <h2>${st.jp}駅</h2>
+            <p><strong>${st.spotjp}</strong> — この駅は「${st.spotjp}」として知られています。</p>
+          </div>
+          <button class="back-btn" onclick="goBack()">Back / 戻る</button>
+        </div>
+      `);
+    });
+  </script>  <script>
+    function toggleMode() {
+      const body = document.body;
+      body.classList.toggle('dark');
+      body.classList.toggle('light');
+    }
+
+    function toggleLang() {
+      const body = document.body;
+      body.classList.toggle('jp');
+    }
+
+    function showPage(id) {
+      document.querySelector('.rail-line').style.display = 'none';
+      document.querySelector('.map').style.display = 'none';
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goBack() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelector('.rail-line').style.display = 'flex';
+      document.querySelector('.map').style.display = 'block';
+    }
+  </script></body>
+</html>
